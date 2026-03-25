@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Button,
   Card,
@@ -52,9 +52,18 @@ const isPdfFile = (file: File): boolean => {
 const getErrorText = (err: unknown): string => {
   if (typeof err === "string") return err;
   const e = err as any;
+  const data = e.response?.data;
+  
+  // FastAPI returns validation errors in a "detail" array
+  if (data?.detail && Array.isArray(data.detail)) {
+    return data.detail
+      .map((d: any) => `${d.loc?.join(".") || "error"}: ${d.msg}`)
+      .join("; ");
+  }
+
   return (
-    e.response?.data?.detail ||
-    e.response?.data?.message ||
+    data?.detail ||
+    data?.message ||
     e.message ||
     "Unknown error"
   );

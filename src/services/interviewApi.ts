@@ -34,7 +34,7 @@ export const startInterview = async (params: {
       // Let Axios set the proper boundary header; we just signal multipart intent.
       headers: {
         ...authHeaders(params.accessToken).headers,
-        "Content-Type": "multipart/form-data",
+        // "Content-Type": "multipart/form-data",
       },
     },
   );
