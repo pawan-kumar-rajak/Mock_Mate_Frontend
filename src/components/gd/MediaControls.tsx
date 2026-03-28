@@ -25,6 +25,7 @@ export default function MediaControls(props: Props) {
         type={isAudioEnabled ? "default" : "primary"}
         icon={isAudioEnabled ? <AudioOutlined /> : <AudioMutedOutlined />}
         onClick={onToggleAudio}
+        className="rounded-xl! font-semibold!"
       >
         {isAudioEnabled ? "Mute" : "Unmute"}
       </Button>
@@ -32,10 +33,11 @@ export default function MediaControls(props: Props) {
         type={isVideoEnabled ? "default" : "primary"}
         icon={isVideoEnabled ? <VideoCameraOutlined /> : <VideoCameraAddOutlined />}
         onClick={onToggleVideo}
+        className="rounded-xl! font-semibold!"
       >
         {isVideoEnabled ? "Camera Off" : "Camera On"}
       </Button>
-      <Button danger icon={<PhoneOutlined />} onClick={onLeave}>
+      <Button danger icon={<PhoneOutlined />} onClick={onLeave} className="rounded-xl! font-semibold!">
         Leave Room
       </Button>
     </div>

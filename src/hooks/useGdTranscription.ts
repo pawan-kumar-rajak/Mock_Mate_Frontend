@@ -23,8 +23,13 @@ const getSpeechRecognition =
 export function useGdTranscription(params: {
 	enabled: boolean;
 	onTranscript: TranscriptHandler;
+	onStatusChange?: (status: {
+		supported: boolean;
+		active: boolean;
+		error?: string | null;
+	}) => void;
 }) {
-	const { enabled, onTranscript } = params;
+	const { enabled, onTranscript, onStatusChange } = params;
 	const recognitionRef = useRef<SpeechRecognition | null>(
 		null,
 	);
@@ -44,14 +49,32 @@ export function useGdTranscription(params: {
 
 	useEffect(() => {
 		const Recognition = getSpeechRecognition();
-		if (!enabled || !Recognition) {
-			logger.warn(
-				"Transcription disabled or SpeechRecognition not available",
-			);
+		if (!Recognition) {
+			logger.warn("SpeechRecognition not available");
+			onStatusChange?.({
+				supported: false,
+				active: false,
+				error: "unsupported_browser",
+			});
+			return;
+		}
+
+		if (!enabled) {
+			logger.warn("Transcription disabled");
+			onStatusChange?.({
+				supported: true,
+				active: false,
+				error: null,
+			});
 			return;
 		}
 
 		logger.info("Initializing GD Transcription");
+		onStatusChange?.({
+			supported: true,
+			active: false,
+			error: null,
+		});
 		const recognition = new Recognition();
 		recognitionRef.current = recognition;
 		recognition.continuous = true;
@@ -132,6 +155,11 @@ export function useGdTranscription(params: {
 			) {
 				canRestartRef.current = false;
 			}
+			onStatusChange?.({
+				supported: true,
+				active: false,
+				error: event.error,
+			});
 		};
 
 		recognition.onend = () => {
@@ -146,6 +174,11 @@ export function useGdTranscription(params: {
 				logger.warn(
 					"Transcription restart disabled due to previous error",
 				);
+				onStatusChange?.({
+					supported: true,
+					active: false,
+					error: lastErrorRef.current,
+				});
 				return;
 			}
 			if (restartingRef.current) return;
@@ -176,11 +209,21 @@ export function useGdTranscription(params: {
 					lastErrorRef.current = null;
 					recognition.start();
 					networkRetryCountRef.current = 0;
+					onStatusChange?.({
+						supported: true,
+						active: true,
+						error: null,
+					});
 				} catch (error) {
 					logger.error(
 						"Failed to restart transcription",
 						error,
 					);
+					onStatusChange?.({
+						supported: true,
+						active: false,
+						error: "restart_failed",
+					});
 				}
 			}, delayMs);
 		};
@@ -188,8 +231,18 @@ export function useGdTranscription(params: {
 		try {
 			logger.info("Starting transcription");
 			recognition.start();
+			onStatusChange?.({
+				supported: true,
+				active: true,
+				error: null,
+			});
 		} catch (error) {
 			logger.error("Failed to start transcription", error);
+			onStatusChange?.({
+				supported: true,
+				active: false,
+				error: "start_failed",
+			});
 		}
 
 		return () => {
@@ -206,6 +259,11 @@ export function useGdTranscription(params: {
 				logger.error("Failed to stop transcription", error);
 			}
 			recognitionRef.current = null;
+			onStatusChange?.({
+				supported: true,
+				active: false,
+				error: null,
+			});
 		};
-	}, [enabled, onTranscript]);
+	}, [enabled, onStatusChange, onTranscript]);
 }

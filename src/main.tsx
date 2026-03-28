@@ -10,6 +10,7 @@ import QuizSelector from "./components/QuizSelector.tsx";
 import { Empty } from "antd";
 import TTS_STT_Test from "./components/TTS_STT_Test.tsx";
 import { AuthProvider } from "./context/AuthContext.tsx";
+import { ThemeProvider } from "./context/ThemeContext.tsx";
 import App from "./App.tsx";
 import InterviewSetup from "./pages/InterviewSetup.tsx";
 import InterviewRoom from "./pages/InterviewRoom.tsx";
@@ -96,8 +97,10 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
+    </ThemeProvider>
   </StrictMode>,
 );

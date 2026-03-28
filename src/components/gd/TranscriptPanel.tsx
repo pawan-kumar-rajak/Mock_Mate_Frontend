@@ -16,6 +16,7 @@ const { Title, Text } = Typography;
 
 export default function TranscriptPanel({ items }: Props) {
   const listRef = useRef<HTMLDivElement | null>(null);
+  const localUserId = typeof window !== "undefined" ? localStorage.getItem("userId") : null;
 
   useEffect(() => {
     if (!listRef.current) return;
@@ -39,7 +40,7 @@ export default function TranscriptPanel({ items }: Props) {
         )}
         {items.map((item) => (
           <div key={item.id} className="flex gap-2">
-            <Tag color="geekblue">{item.userId}</Tag>
+            <Tag color="geekblue">{item.userId === localUserId ? "You" : item.userId}</Tag>
             <div className="flex-1">
               <div className="text-slate-800">{item.text}</div>
               <div className="text-xs text-slate-400">

@@ -78,7 +78,9 @@ const QuizSelector = () => {
 
   // Shared Tailwind styles
   const cardBase =
-    "p-8 bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-xl dark:shadow-black/40 flex flex-col justify-between transition-all duration-500";
+    "p-8 bg-white dark:bg-slate-900 rounded-[2rem] border border-slate-200 dark:border-slate-800 shadow-xl dark:shadow-black/40 flex flex-col justify-between transition-all duration-500";
+  const inputBase =
+    "h-12 rounded-2xl border-slate-200 bg-white text-slate-900 dark:border-slate-700 dark:bg-slate-950/70 dark:text-slate-100";
 
   const items = [
     {
@@ -134,17 +136,17 @@ const QuizSelector = () => {
                 value={skillInput}
                 onChange={(e) => setSkillInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="h-12 text-9xl"
+                className={inputBase}
                 prefix={<BookOutlined className="text-slate-400 mr-2" />}
               />
-              <label className="text-white ml-28 text-start mr-4 font-bold">
+              <label className="ml-6 mr-4 self-center text-start font-bold text-slate-700 dark:text-slate-300">
                 Question Count
               </label>
               <InputNumber
                 min={1}
                 max={30}
                 value={questionCount}
-                className="w-28!"
+                className="w-28! rounded-2xl! border-slate-200! dark:border-slate-700!"
                 onChange={(value) => setQuestionCount(value ?? 10)}
               />
             </div>
@@ -223,17 +225,17 @@ const QuizSelector = () => {
                 placeholder="e.g. MERN Stack Developer..."
                 value={customRole}
                 onChange={(e) => setCustomRole(e.target.value)}
-                className="h-12 text-9xl mb-4"
+                className={`${inputBase} mb-4`}
                 prefix={<StarOutlined className="text-indigo-400 mr-2" />}
               />
-              <label className="text-white ml-28 text-start mr-4 font-bold">
+              <label className="ml-6 mr-4 self-center text-start font-bold text-slate-700 dark:text-slate-300">
                 Question Count
               </label>
               <InputNumber
                 min={1}
                 max={30}
                 value={questionCount}
-                className="w-28! h-12"
+                className="w-28! h-12 rounded-2xl! border-slate-200! dark:border-slate-700!"
                 onChange={(value) => setQuestionCount(value ?? 10)}
               />
             </div>

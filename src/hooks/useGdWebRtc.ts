@@ -155,12 +155,23 @@ export function useGdWebRtc(params: {
 		}
 		logger.info("Initializing local media");
 		let stream: MediaStream;
+		const preferredConstraints: MediaStreamConstraints = {
+			audio: {
+				echoCancellation: true,
+				noiseSuppression: true,
+				autoGainControl: true,
+			},
+			video: {
+				width: { ideal: 1280 },
+				height: { ideal: 720 },
+				frameRate: { ideal: 24, max: 30 },
+			},
+		};
 		try {
 			stream =
-				await navigator.mediaDevices.getUserMedia({
-					audio: true,
-					video: true,
-				});
+				await navigator.mediaDevices.getUserMedia(
+					preferredConstraints,
+				);
 		} catch (error) {
 			logger.warn(
 				"Video+audio capture failed, retrying with audio-only",
@@ -168,7 +179,11 @@ export function useGdWebRtc(params: {
 			);
 			stream =
 				await navigator.mediaDevices.getUserMedia({
-					audio: true,
+					audio: {
+						echoCancellation: true,
+						noiseSuppression: true,
+						autoGainControl: true,
+					},
 					video: false,
 				});
 		}

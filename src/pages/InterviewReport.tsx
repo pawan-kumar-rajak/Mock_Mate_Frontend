@@ -90,8 +90,8 @@ function InterviewReportPage() {
   if (!report || !sessionId) {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center px-4 transition-colors duration-500">
-        <Card className="rounded-3xl shadow-xl dark:bg-slate-900 border-none text-center p-8 max-w-sm">
-          <Text className="text-lg block mb-6 dark:text-slate-300">
+        <Card className="rounded-3xl shadow-xl border border-slate-200 bg-white dark:bg-slate-900 dark:border-slate-800 text-center p-8 max-w-sm">
+          <Text className="text-lg text-slate-600 block mb-6 dark:text-slate-300">
             Session data not found.
           </Text>
           <Button
@@ -114,7 +114,7 @@ function InterviewReportPage() {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 px-4 py-12 transition-colors duration-500">
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Main Header & Score Card */}
-        <Card className="rounded-4xl! shadow-2xl border-none overflow-hidden bg-white dark:bg-slate-900 transition-all">
+        <Card className="rounded-4xl! shadow-2xl border border-slate-200! dark:border-slate-800! overflow-hidden bg-white dark:bg-slate-900 transition-all">
           <div className="bg-indigo-600 p-8 md:p-12 text-center text-white relative">
             {/* Background Glow */}
             <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,var(--tw-gradient-stops))] from-white/10 to-transparent pointer-events-none" />
@@ -192,7 +192,7 @@ function InterviewReportPage() {
         {/* Detailed Feedback Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Strengths Card */}
-          <Card className="rounded-3xl! shadow-xl border-none bg-white dark:bg-slate-900">
+          <Card className="rounded-3xl! shadow-xl border border-slate-200! dark:border-slate-800! bg-white dark:bg-slate-900">
             <div className="p-4 bg-green-50 dark:bg-green-500/10 rounded-2xl mb-6 flex items-center gap-3">
               <CheckCircleOutlined className="text-green-500 text-xl" />
               <Text className="font-black uppercase tracking-widest text-xs text-green-700 dark:text-green-400">
@@ -218,7 +218,7 @@ function InterviewReportPage() {
           </Card>
 
           {/* Weaknesses Card */}
-          <Card className="rounded-3xl! shadow-xl border-none bg-white dark:bg-slate-900">
+          <Card className="rounded-3xl! shadow-xl border border-slate-200! dark:border-slate-800! bg-white dark:bg-slate-900">
             <div className="p-4 bg-red-50 dark:bg-red-500/10 rounded-2xl mb-6 flex items-center gap-3">
               <WarningOutlined className="text-red-500 text-xl" />
               <Text className="font-black uppercase tracking-widest text-xs text-red-700 dark:text-red-400">

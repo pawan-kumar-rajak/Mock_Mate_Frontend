@@ -39,7 +39,7 @@ export default function ReportModal({ open, peerId, onCancel, onSubmit }: Props)
       title="Report participant"
     >
       <div className="space-y-3">
-        <Text className="text-slate-600">Reporting: {peerId || "-"}</Text>
+        <Text className="text-slate-600 dark:text-slate-300">Reporting: {peerId || "-"}</Text>
         <Select
           value={category}
           onChange={(value) => setCategory(value)}
@@ -56,6 +56,7 @@ export default function ReportModal({ open, peerId, onCancel, onSubmit }: Props)
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           placeholder="Explain the issue..."
+          className="rounded-xl!"
         />
       </div>
     </Modal>

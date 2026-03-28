@@ -47,7 +47,7 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-500">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-500">
       {/* Hero Section */}
       <div className="relative pt-2 pb-8 overflow-hidden">
         {/* Background Gradients */}
@@ -86,7 +86,7 @@ const Home: React.FC = () => {
                 ${
                   feature.featured
                     ? "bg-linear-to-br from-indigo-600 to-purple-700 dark:from-indigo-600/90 dark:to-purple-700/90 shadow-2xl shadow-indigo-500/30 active:scale-[0.98]"
-                    : "bg-slate-50 dark:bg-slate-900 shadow-sm hover:shadow-2xl hover:shadow-indigo-500/10 active:scale-[0.98]"
+                    : "border border-slate-200/80 bg-white shadow-sm hover:shadow-2xl hover:shadow-indigo-500/10 active:scale-[0.98] dark:border-slate-800 dark:bg-slate-900"
                 }`}
             >
               <div className="p-4 flex flex-col h-full">

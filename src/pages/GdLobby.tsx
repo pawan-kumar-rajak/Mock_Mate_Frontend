@@ -136,7 +136,7 @@ export default function GdLobby() {
               in a live environment.
             </Text>
           </div>
-          <div className="flex items-center gap-4 bg-white dark:bg-slate-900 p-2 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
+          <div className="flex items-center gap-4 bg-white dark:bg-slate-900 p-2 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
             <ConnectionBadge connected={isConnected} />
           </div>
         </div>

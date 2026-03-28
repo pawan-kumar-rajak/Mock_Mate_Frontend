@@ -1,5 +1,5 @@
-﻿import { useCallback, useEffect, useMemo, useState } from "react";
-import { Button, Card, Typography, message, Space, Divider } from "antd";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Button, Card, Typography, message, Space, Divider, Alert } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useGdRoomSocket } from "../hooks/useGdRoomSocket";
@@ -41,6 +41,26 @@ export default function GdRoom() {
   const [transcripts, setTranscripts] = useState<
     { id: string; userId: string; text: string; timestamp: number }[]
   >([]);
+  const [sttSupported, setSttSupported] = useState(true);
+  const [sttActive, setSttActive] = useState(false);
+  const recentTranscriptMapRef = useRef<Map<string, number>>(new Map());
+
+  const appendTranscript = useCallback(
+    (item: { id: string; userId: string; text: string; timestamp: number }) => {
+      const text = item.text.trim();
+      if (!text) return;
+      const nowMs = Date.now();
+      const dedupeKey = `${item.userId}:${text.toLowerCase()}`;
+      const seenAt = recentTranscriptMapRef.current.get(dedupeKey) ?? 0;
+      if (nowMs - seenAt < 1500) return;
+      recentTranscriptMapRef.current.set(dedupeKey, nowMs);
+      setTranscripts((prev) => {
+        const next = [...prev, { ...item, text }];
+        return next.length > 200 ? next.slice(next.length - 200) : next;
+      });
+    },
+    [],
+  );
 
   const normalizePeerIds = useCallback(
     (ids: string[]): string[] => {
@@ -94,15 +114,12 @@ export default function GdRoom() {
         void handleIceCandidate(msg.from_user, msg.candidate);
       } else if (msg.type === "transcript" && msg.text?.trim()) {
         const nowMs = Date.now();
-        setTranscripts((prev) => [
-          ...prev,
-          {
-            id: `${msg.from_user || "peer"}-${msg.timestamp || nowMs}`,
-            userId: msg.from_user || "peer",
-            text: msg.text!,
-            timestamp: msg.timestamp || nowMs / 1000,
-          },
-        ]);
+        appendTranscript({
+          id: `${msg.from_user || "peer"}-${msg.timestamp || nowMs}`,
+          userId: msg.from_user || "peer",
+          text: msg.text!,
+          timestamp: msg.timestamp || nowMs / 1000,
+        });
       } else if (msg.type === "room_ended" || msg.type === "blacklisted") {
         message.info(msg.message || "Session ended.");
         navigate("/gd");
@@ -130,17 +147,20 @@ export default function GdRoom() {
   const handleTranscript = useCallback(
     (text: string) => {
       const now = Date.now();
-      setTranscripts((prev) => [
-        ...prev,
-        {
-          id: `${userId || "local"}-${now}`,
-          userId: userId || "local",
-          text,
-          timestamp: now / 1000,
-        },
-      ]);
+      const senderId = userId || "local";
+      appendTranscript({
+        id: `${senderId}-${now}`,
+        userId: senderId,
+        text,
+        timestamp: now / 1000,
+      });
+      send({
+        type: "transcript",
+        text: text.trim(),
+        timestamp: now / 1000,
+      });
     },
-    [userId],
+    [appendTranscript, send, userId],
   );
 
   useEffect(() => {
@@ -150,6 +170,10 @@ export default function GdRoom() {
   useGdTranscription({
     enabled: Boolean(isConnected && userId && isAudioEnabled),
     onTranscript: handleTranscript,
+    onStatusChange: (status) => {
+      setSttSupported(status.supported);
+      setSttActive(status.active);
+    },
   });
 
   const handleLeave = async () => {
@@ -190,7 +214,7 @@ export default function GdRoom() {
 
   return (
     <div className="h-dvh overflow-hidden bg-slate-950 p-2 md:p-4 transition-colors duration-500">
-      <div className="mx-auto flex h-full w-full max-w-400 flex-col overflow-hidden rounded-4xl border border-slate-800 bg-slate-900/50 shadow-2xl backdrop-blur-md">
+      <div className="flex h-full w-full flex-col overflow-hidden rounded-4xl border border-slate-800 bg-slate-900/50 shadow-2xl backdrop-blur-md">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-800 px-6 py-4">
           <Space size="large">
@@ -220,7 +244,7 @@ export default function GdRoom() {
 
         <div className="flex min-h-0 flex-1">
           {/* Main Stage */}
-          <section className="flex min-w-0 flex-1 flex-col">
+          <section className="flex flex-1 flex-col">
             <div className="min-h-0 flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar">
               <ParticipantGrid
                 localStream={localStream}
@@ -265,6 +289,22 @@ export default function GdRoom() {
             {/* Transcript Area */}
             <div className="shrink-0 border-t border-slate-800 bg-slate-950/50 px-4 py-2">
               <div className="h-[22vh] min-h-40 max-h-70">
+                {!sttSupported && (
+                  <Alert
+                    className="mb-2"
+                    type="warning"
+                    showIcon
+                    message="Live transcription is not supported in this browser. Audio/video still works."
+                  />
+                )}
+                {sttSupported && !sttActive && isAudioEnabled && (
+                  <Alert
+                    className="mb-2"
+                    type="info"
+                    showIcon
+                    message="Transcription is reconnecting. It will resume automatically."
+                  />
+                )}
                 <TranscriptPanel items={transcripts} />
               </div>
             </div>
@@ -283,7 +323,7 @@ export default function GdRoom() {
 
           {/* Sidebar - Desktop Only */}
           <aside className="hidden w-95 flex-col border-l border-slate-800 bg-slate-900/30 lg:flex">
-            <div className="p-6 overflow-y-auto custom-scrollbar flex-1">
+            <div className="p-2 overflow-y-auto custom-scrollbar flex-1">
               <TopicPanel
                 topic={topic}
                 context={context}
@@ -363,3 +403,4 @@ export default function GdRoom() {
     </div>
   );
 }
+

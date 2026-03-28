@@ -696,22 +696,22 @@ const TTS_STT_Test: React.FC = () => {
 	).reduce((sum, count) => sum + count, 0);
 
 	return (
-		<div className="min-h-screen bg-gray-50 p-8 font-sans">
+		<div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-8 font-sans text-slate-900 dark:text-slate-100 transition-colors duration-500">
 			<div className="max-w-6xl mx-auto">
 				<header className="mb-10">
-					<h1 className="text-4xl font-extrabold text-gray-900">
+					<h1 className="text-4xl font-extrabold text-slate-900 dark:text-white">
 						AI Interview Proctor
 					</h1>
-					<p className="text-gray-600 mt-2">
+					<p className="text-slate-600 dark:text-slate-400 mt-2">
 						TTS/STT Bench with 3D Avatar Lip Sync
 					</p>
 				</header>
 
-				<section className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 mb-8">
-					<h2 className="text-xl font-bold mb-4 text-slate-800">
+				<section className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 mb-8">
+					<h2 className="text-xl font-bold mb-4 text-slate-800 dark:text-slate-100">
 						Avatar Lip Sync Preview
 					</h2>
-					<div className="w-full h-[420px] rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
+					<div className="w-full h-[420px] rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800">
 						<Canvas
 							camera={{
 								position: [0, 0.35, 1.4],
@@ -740,14 +740,14 @@ const TTS_STT_Test: React.FC = () => {
 							/>
 						</Canvas>
 					</div>
-					<div className="mt-3 text-sm text-slate-600 flex gap-6">
+					<div className="mt-3 text-sm text-slate-600 dark:text-slate-400 flex gap-6">
 						<span>Active viseme: {activeViseme}</span>
 						<span>
 							Word boundaries: {ttsBoundaries.length}
 						</span>
 					</div>
 					{audioUrl && (
-						<div className="mt-3 text-sm text-slate-500 break-all">
+						<div className="mt-3 text-sm text-slate-500 dark:text-slate-400 break-all">
 							Audio source:{" "}
 							{audioSourceLabel === "sarvam-tts"
 								? "Sarvam TTS + wawa-lipsync"
@@ -757,12 +757,12 @@ const TTS_STT_Test: React.FC = () => {
 				</section>
 
 				<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-					<section className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+					<section className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
 						<h2 className="text-xl font-bold mb-4 text-blue-700">
 							1. Interviewer (TTS)
 						</h2>
 						<textarea
-							className="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+							className="w-full p-4 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all dark:text-slate-100"
 							rows={5}
 							value={text}
 							onChange={(e) => setText(e.target.value)}
@@ -788,7 +788,7 @@ const TTS_STT_Test: React.FC = () => {
 						</div>
 					</section>
 
-					<section className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+					<section className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
 						<h2 className="text-xl font-bold mb-4 text-purple-700">
 							2. Candidate (STT)
 						</h2>
@@ -850,8 +850,8 @@ const TTS_STT_Test: React.FC = () => {
 				</div>
 
 				{analytics.wordCount > 0 && (
-					<section className="mt-8 bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
-						<h3 className="text-2xl font-bold text-gray-800 mb-6">
+					<section className="mt-8 bg-white dark:bg-slate-900 p-8 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800">
+						<h3 className="text-2xl font-bold text-gray-800 dark:text-slate-100 mb-6">
 							Speech Insights
 						</h3>
 						<div className="grid grid-cols-2 md:grid-cols-4 gap-6">

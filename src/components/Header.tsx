@@ -1,5 +1,5 @@
-﻿import { Button, Dropdown, Avatar, Typography } from "antd";
-import { useEffect, useState } from "react";
+import { Button, Dropdown, Avatar, Typography } from "antd";
+import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   UserOutlined,
@@ -10,6 +10,7 @@ import {
   CloseOutlined,
 } from "@ant-design/icons";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 import axios from "axios";
 
 const { Text } = Typography;
@@ -32,12 +33,7 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { userEmail, logout } = useAuth();
-
-  const [dark, setDark] = useState(() => {
-    const saved = localStorage.getItem("theme");
-    if (saved) return saved === "dark";
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
-  });
+  const { isDark, toggleTheme } = useTheme();
 
   const handleLogout = async () => {
     try {
@@ -52,8 +48,8 @@ const Header = () => {
       );
       logout();
       navigate("/");
-    } catch (error) {
-      logout(); // Force logout on frontend even if API fails
+    } catch {
+      logout();
       navigate("/");
     }
   };
@@ -64,10 +60,12 @@ const Header = () => {
         key: "email",
         label: (
           <div className="px-2 py-1">
-            <Text className="text-[10px]! font-black! uppercase! tracking-widest! text-slate-400! block">
+            <Text className="block text-[10px]! font-black! uppercase! tracking-widest! text-slate-400!">
               Logged in as
             </Text>
-            <Text className="dark:text-slate-200! font-bold!">{userEmail}</Text>
+            <Text className="font-bold! text-slate-700! dark:text-slate-200!">
+              {userEmail}
+            </Text>
           </div>
         ),
         disabled: true,
@@ -89,47 +87,33 @@ const Header = () => {
     ],
   };
 
-  useEffect(() => {
-    const root = document.documentElement;
-    if (dark) {
-      root.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      root.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
-  }, [dark]);
-
-  // Utility to check active link
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="w-full bg-white/70 dark:bg-slate-950/70 backdrop-blur-xl border-b border-slate-100 dark:border-slate-800 sticky top-0 z-50 transition-all duration-300">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="flex justify-between h-20 items-center">
-          {/* Logo Section */}
+    <nav className="sticky top-0 z-50 w-full border-b border-slate-200/80 bg-white/80 backdrop-blur-xl transition-all duration-300 dark:border-slate-800/80 dark:bg-slate-950/75">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="flex h-20 items-center justify-between">
           <div
-            className="flex items-center gap-3 cursor-pointer group"
+            className="group flex cursor-pointer items-center gap-3"
             onClick={() => navigate("/")}
           >
-            <div className="w-10 h-10 bg-linear-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20 group-hover:rotate-6 transition-transform">
-              <span className="text-white font-black text-lg">M</span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-indigo-600 to-purple-600 shadow-lg shadow-indigo-500/20 transition-transform group-hover:rotate-6">
+              <span className="text-lg font-black text-white">M</span>
             </div>
-            <span className="text-xl font-black bg-linear-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-300 bg-clip-text text-transparent tracking-tighter">
+            <span className="bg-linear-to-r from-indigo-600 to-purple-600 bg-clip-text text-xl font-black tracking-tighter text-transparent dark:from-indigo-400 dark:to-purple-300">
               MockMate
             </span>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center bg-slate-100/50 dark:bg-slate-900/50 p-1.5 rounded-2xl border border-slate-200/50 dark:border-slate-800/50">
+          <div className="hidden items-center rounded-2xl border border-slate-200/80 bg-slate-100/80 p-1.5 dark:border-slate-800/70 dark:bg-slate-900/60 md:flex">
             {links.map((link) => (
               <a
                 key={link.name}
                 href={link.href}
-                className={`px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-widest transition-all duration-200 ${
+                className={`rounded-xl px-5 py-2 text-xs font-bold uppercase tracking-widest transition-all duration-200 ${
                   isActive(link.href)
-                    ? "bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm"
-                    : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                    ? "bg-white text-indigo-600 shadow-sm dark:bg-slate-800 dark:text-indigo-400"
+                    : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
                 }`}
               >
                 {link.name}
@@ -137,21 +121,18 @@ const Header = () => {
             ))}
           </div>
 
-          {/* Right Action Area */}
-          <div className="hidden md:flex items-center gap-4">
-            {/* Theme Toggle */}
+          <div className="hidden items-center gap-4 md:flex">
             <button
-              onClick={() => setDark(!dark)}
-              className="hidden w-10 h-10 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-500 dark:text-amber-400 hover:border-indigo-500 transition-all shadow-sm active:scale-90"
+              onClick={toggleTheme}
+              aria-label={`Switch to ${isDark ? "light" : "dark"} theme`}
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-sm transition-all hover:border-indigo-500 hover:text-indigo-600 active:scale-90 dark:border-slate-800 dark:bg-slate-900 dark:text-amber-400 dark:hover:border-indigo-500 dark:hover:text-amber-300"
             >
-              {dark ? (
+              {isDark ? (
                 <SunOutlined className="text-lg" />
               ) : (
                 <MoonFilled className="text-lg" />
               )}
             </button>
-
-            {/* <div className="h-6 w-px bg-slate-200 dark:bg-slate-800 mx-1" /> */}
 
             {userEmail ? (
               <Dropdown
@@ -160,10 +141,10 @@ const Header = () => {
                 placement="bottomRight"
                 arrow
               >
-                <div className="flex items-center gap-3 cursor-pointer pl-2 group">
+                <div className="group flex cursor-pointer items-center gap-3 pl-2">
                   <Avatar
                     icon={<UserOutlined />}
-                    className="bg-linear-to-br! from-indigo-500! to-purple-600! shadow-md group-hover:scale-105 transition-transform"
+                    className="bg-linear-to-br! from-indigo-500! to-purple-600! shadow-md transition-transform group-hover:scale-105"
                     size={40}
                   />
                 </div>
@@ -173,14 +154,14 @@ const Header = () => {
                 <Button
                   type="text"
                   onClick={() => navigate("/signin")}
-                  className="font-bold! text-slate-600! dark:text-slate-400! hover:text-indigo-600!"
+                  className="font-bold! text-slate-600! hover:text-indigo-600! dark:text-slate-400!"
                 >
                   Log In
                 </Button>
                 <Button
                   type="primary"
                   onClick={() => navigate("/signup")}
-                  className="h-11 px-6 rounded-xl! bg-indigo-600! border-none! font-bold! shadow-lg shadow-indigo-500/20 active:scale-95 transition-all"
+                  className="h-11 rounded-xl! border-none! bg-indigo-600! px-6 font-bold! shadow-lg shadow-indigo-500/20 transition-all active:scale-95"
                 >
                   Sign Up
                 </Button>
@@ -188,17 +169,16 @@ const Header = () => {
             )}
           </div>
 
-          {/* Mobile UI */}
-          <div className="md:hidden flex items-center gap-3">
+          <div className="flex items-center gap-3 md:hidden">
             <button
-              onClick={() => setDark(!dark)}
-              className="text-slate-500 dark:text-amber-400 text-xl"
+              onClick={toggleTheme}
+              className="text-xl text-slate-500 dark:text-amber-400"
             >
-              {dark ? <SunOutlined /> : <MoonFilled />}
+              {isDark ? <SunOutlined /> : <MoonFilled />}
             </button>
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300"
+              className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-600 dark:bg-slate-900 dark:text-slate-300"
             >
               {isOpen ? <CloseOutlined /> : <MenuOutlined />}
             </button>
@@ -206,23 +186,22 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Mobile Drawer-style Menu */}
       {isOpen && (
-        <div className="md:hidden border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-950 p-6 space-y-4 animate-in slide-in-from-top-4">
+        <div className="animate-in slide-in-from-top-4 space-y-4 border-t border-slate-200 bg-white p-6 dark:border-slate-800 dark:bg-slate-950 md:hidden">
           {links.map((link) => (
             <a
               key={link.name}
               href={link.href}
-              className={`block p-4 rounded-2xl text-sm font-bold uppercase tracking-widest ${
+              className={`block rounded-2xl p-4 text-sm font-bold uppercase tracking-widest ${
                 isActive(link.href)
-                  ? "bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400"
+                  ? "bg-indigo-50 text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400"
                   : "text-slate-600 dark:text-slate-400"
               }`}
             >
               {link.name}
             </a>
           ))}
-          <div className="pt-4 border-t border-slate-100 dark:border-slate-800">
+          <div className="border-t border-slate-200 pt-4 dark:border-slate-800">
             {userEmail ? (
               <Button
                 danger
@@ -238,7 +217,7 @@ const Header = () => {
                 <Button
                   size="large"
                   onClick={() => navigate("/signin")}
-                  className="rounded-xl! font-bold! dark:bg-slate-900! dark:text-white! dark:border-slate-800!"
+                  className="rounded-xl! font-bold! dark:border-slate-800! dark:bg-slate-900! dark:text-white!"
                 >
                   Log In
                 </Button>
@@ -246,7 +225,7 @@ const Header = () => {
                   size="large"
                   type="primary"
                   onClick={() => navigate("/signup")}
-                  className="rounded-xl! font-bold! bg-indigo-600! border-none!"
+                  className="rounded-xl! border-none! bg-indigo-600! font-bold!"
                 >
                   Join Free
                 </Button>

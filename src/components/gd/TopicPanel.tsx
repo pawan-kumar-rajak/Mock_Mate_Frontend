@@ -10,27 +10,36 @@ type Props = {
 
 export default function TopicPanel({ topic, context, keyPoints }: Props) {
   return (
-    <Card className="rounded-2xl border border-slate-100">
-      <Title level={4} className="m-0!">
-        Topic
-      </Title>
-      <Paragraph className="mt-2 text-slate-700">
-        {topic || "Waiting for topic..."}
-      </Paragraph>
-      {context && (
-        <Paragraph className="text-slate-600">
-          <Text strong>Context:</Text> {context}
+    <Card className="rounded-2xl border border-slate-100 overflow-hidden">
+      <div className="space-y-3 p-4">
+        <Title level={4} className="!m-0 break-words">
+          Topic
+        </Title>
+
+        <Paragraph className="mb-0! text-slate-700 break-words whitespace-pre-wrap [overflow-wrap:anywhere]">
+          {topic || "Waiting for topic..."}
         </Paragraph>
-      )}
-      {keyPoints && keyPoints.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {keyPoints.map((kp) => (
-            <Tag key={kp} color="blue">
-              {kp}
-            </Tag>
-          ))}
-        </div>
-      )}
+
+        {context && (
+          <Paragraph className="mb-0! text-slate-600 break-words whitespace-pre-wrap [overflow-wrap:anywhere]">
+            <Text strong>Context:</Text> {context}
+          </Paragraph>
+        )}
+
+        {keyPoints && keyPoints.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {keyPoints.map((kp) => (
+              <Tag
+                key={kp}
+                color="blue"
+                className="m-0 max-w-full whitespace-normal break-words [overflow-wrap:anywhere] h-auto py-1"
+              >
+                {kp}
+              </Tag>
+            ))}
+          </div>
+        )}
+      </div>
     </Card>
   );
 }

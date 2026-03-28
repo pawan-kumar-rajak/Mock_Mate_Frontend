@@ -288,13 +288,13 @@ function Quiz() {
 
   return (
     <div className="mx-auto pt-4 bg-slate-50 dark:bg-[#0d1117] min-h-screen transition-all duration-500">
-      <header className="flex flex-col md:flex-row md:items-end justify-between items-center!">
+      <header className="flex flex-col justify-between md:flex-row md:items-end">
         <div>
           <Button
             icon={<LeftOutlined />}
             type="text"
             onClick={() => navigate("/")}
-            className="mx-20! pl-0! dark:text-slate-400! hover:text-slate-500! transition-colors mb-2 text-lg!"
+            className="mx-20! mb-2! pl-0! text-slate-500! dark:text-slate-400! hover:text-slate-700! transition-colors text-lg!"
           >
             Exit Quiz
           </Button>
@@ -336,7 +336,7 @@ function Quiz() {
                 Question {idx + 1}
               </h2>
             }
-            className="mb-4! rounded-3xl! shadow-xl dark:shadow-black/20 border-none dark:bg-[#161b22] overflow-hidden"
+            className="mb-4! rounded-3xl! shadow-xl dark:shadow-black/20 border border-slate-200! dark:border-slate-800! bg-white! dark:bg-[#161b22] overflow-hidden"
           >
             <Paragraph className="text-lg! font-bold text-slate-800! dark:text-slate-100!">
               {q.question_text}
@@ -351,7 +351,7 @@ function Quiz() {
                   <Radio
                     key={i}
                     value={i}
-                    className={`p-5 rounded-2xl! w-full transition-all group`}
+                    className="group w-full rounded-2xl! border border-slate-200 p-5 transition-all dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-500"
                   >
                     <span className="ml-2 text-lg">{opt}</span>
                   </Radio>
